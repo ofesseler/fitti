@@ -44,79 +44,79 @@ class _FittiState extends State<Fitti> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have this many workouts so far:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(8),
-                itemCount: workoutContainers.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: GestureDetector(
-                        child: Container(
-                          color: Colors.amber,
-                          child: Row(children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        workoutContainers[index].name,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                          "Date ${workoutContainers[index].created}"),
-                                    ]),
-                              ),
-                            ),
-                            Column(children: [
-                              Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Row(children: <Widget>[
-                                    for (var workout
-                                        in workoutContainers[index].exercises)
-                                      Text(workout.category.name)
-                                  ]))
-                            ]),
-                          ]),
-                        ),
-                        onTap: () => _navigateToWorkoutScreen(context, workoutContainers[index]),
-                      ));
-                })
-          ],
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _createNewWorkout,
-        tooltip: 'New Workout',
-        child: const Icon(Icons.add),
-    );
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have this many workouts so far:',
+              ),
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(8),
+                  itemCount: workoutContainers.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: GestureDetector(
+                          child: Container(
+                            color: Colors.amber,
+                            child: Row(children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          workoutContainers[index].name,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                            "Date ${workoutContainers[index].created}"),
+                                      ]),
+                                ),
+                              ),
+                              Column(children: [
+                                Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Row(children: <Widget>[
+                                      for (var workout
+                                          in workoutContainers[index].exercises)
+                                        Text(workout.category.name)
+                                    ]))
+                              ]),
+                            ]),
+                          ),
+                          onTap: () => _navigateToWorkoutScreen(
+                              context, workoutContainers[index]),
+                        ));
+                  })
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _createNewWorkout,
+          tooltip: 'New Workout',
+          child: const Icon(Icons.add),
+        ));
   }
 
-  Future<dynamic> _navigateToWorkoutScreen(BuildContext context, Workout workout) {
+  Future<dynamic> _navigateToWorkoutScreen(
+      BuildContext context, Workout workout) {
     return Navigator.push(
       context,
       MaterialPageRoute(
