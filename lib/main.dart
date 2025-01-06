@@ -63,6 +63,7 @@ class _FittiState extends State<Fitti> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               ListView.builder(
+                  scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(8),
                   itemCount: workoutContainers.length,
