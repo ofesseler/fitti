@@ -64,6 +64,13 @@ jobs:
         run: flutter pub get
       - name: Precache iOS artifacts
         run: flutter precache --ios
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios
+          pod install
+          cd ..
+      - name: Ensure iOS plugin registrant is generated
+        run: flutter pub get
       - name: Build iOS app
         run: flutter build ios --no-codesign
       - name: Archive iOS artifact
