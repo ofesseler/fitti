@@ -12,31 +12,20 @@ class WorkoutScreen extends StatefulWidget {
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
-  String dropdownValue = WorkoutCategory.Abs.name;
   late Workout workout;
   late TextEditingController _nameController;
   late FocusNode _nameFocusNode;
-  late TextEditingController _setsController;
-  late FocusNode _setsFocusNode;
-  late TextEditingController _repsController;
-  late FocusNode _repsFocusNode;
+  final Map<int, TextEditingController> _repsControllers = {};
+  final Map<int, TextEditingController> _nameControllers = {};
+  final Map<int, TextEditingController> _weightControllers = {};
 
   @override
   void initState() {
     super.initState();
     workout = widget.workout;
-    dropdownValue = workout.exercises.isNotEmpty
-        ? workout.exercises.first.category.name
-        : WorkoutCategory.Abs.name;
     _nameController = TextEditingController(text: workout.name);
     _nameFocusNode = FocusNode();
     _nameFocusNode.addListener(_onNameFocusChange);
-    _setsController = TextEditingController(text: workout.sets.toString());
-    _setsFocusNode = FocusNode();
-    _setsFocusNode.addListener(_onSetsFocusChange);
-    _repsController = TextEditingController(text: workout.repetitions.toString());
-    _repsFocusNode = FocusNode();
-    _repsFocusNode.addListener(_onRepsFocusChange);
   }
 
   void _onNameFocusChange() {
@@ -51,30 +40,20 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     }
   }
 
-  void _onSetsFocusChange() {
-    if (!_setsFocusNode.hasFocus) {
-      final model = Provider.of<WorkoutListModel>(context, listen: false);
-      int? newSets = int.tryParse(_setsController.text);
-      if (newSets != null && workout.sets != newSets) {
-        setState(() {
-          workout.sets = newSets;
-          model.updateWorkout(workout);
-        });
-      }
-    }
+  void _addExercise(BuildContext context) {
+    final model = Provider.of<WorkoutListModel>(context, listen: false);
+    setState(() {
+      workout.exercises.add(Exercise('New Exercise', WorkoutCategory.Abs));
+      model.updateWorkout(workout);
+    });
   }
 
-  void _onRepsFocusChange() {
-    if (!_repsFocusNode.hasFocus) {
-      final model = Provider.of<WorkoutListModel>(context, listen: false);
-      int? newReps = int.tryParse(_repsController.text);
-      if (newReps != null && workout.repetitions != newReps) {
-        setState(() {
-          workout.repetitions = newReps;
-          model.updateWorkout(workout);
-        });
-      }
-    }
+  void _removeExercise(BuildContext context, int index) {
+    final model = Provider.of<WorkoutListModel>(context, listen: false);
+    setState(() {
+      workout.exercises.removeAt(index);
+      model.updateWorkout(workout);
+    });
   }
 
   @override
@@ -82,49 +61,33 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     _nameController.dispose();
     _nameFocusNode.removeListener(_onNameFocusChange);
     _nameFocusNode.dispose();
-    _setsController.dispose();
-    _setsFocusNode.removeListener(_onSetsFocusChange);
-    _setsFocusNode.dispose();
-    _repsController.dispose();
-    _repsFocusNode.removeListener(_onRepsFocusChange);
-    _repsFocusNode.dispose();
+    for (final c in _repsControllers.values) {
+      c.dispose();
+    }
+    for (final c in _nameControllers.values) {
+      c.dispose();
+    }
+    for (final c in _weightControllers.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<WorkoutListModel>(context, listen: false);
-    List<String> dropdownItems =
-        WorkoutCategory.values.map((WorkoutCategory cat) {
-      return cat.name;
-    }).toList();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(workout.name),
       ),
       body: Padding(
-          padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(workout.created.toString()),
-              DropdownButton(
-                  value: dropdownValue,
-                  items: dropdownItems.map((String cat) {
-                    return DropdownMenuItem(
-                      value: cat,
-                      child: Text(cat),
-                    );
-                  }).toList(),
-                  onChanged: (String? newDropdownValue) {
-                    setState(() {
-                      dropdownValue = newDropdownValue!;
-                      if (workout.exercises.isNotEmpty) {
-                        workout.exercises.first.category = WorkoutCategory.values.firstWhere((e) => e.name == dropdownValue);
-                        model.updateWorkout(workout);
-                      }
-                    });
-                  }),
               TextField(
                   controller: _nameController,
                   focusNode: _nameFocusNode,
@@ -137,40 +100,117 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       }
                     });
                   }),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _setsController,
-                focusNode: _setsFocusNode,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Number of Sets'),
-                onSubmitted: (String? value) {
-                  int? newSets = int.tryParse(value ?? '');
-                  if (newSets != null) {
-                    setState(() {
-                      workout.sets = newSets;
-                      model.updateWorkout(workout);
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _repsController,
-                focusNode: _repsFocusNode,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Number of Repetitions'),
-                onSubmitted: (String? value) {
-                  int? newReps = int.tryParse(value ?? '');
-                  if (newReps != null) {
-                    setState(() {
-                      workout.repetitions = newReps;
-                      model.updateWorkout(workout);
-                    });
-                  }
+              const SizedBox(height: 24),
+              const Text('Exercises', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: workout.exercises.length,
+                itemBuilder: (context, index) {
+                  final exercise = workout.exercises[index];
+                  _repsControllers.putIfAbsent(index, () => TextEditingController(text: exercise.reps.toString()));
+                  _nameControllers.putIfAbsent(index, () => TextEditingController(text: exercise.name));
+                  _weightControllers.putIfAbsent(index, () => TextEditingController(text: exercise.weight.toString()));
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _nameControllers[index],
+                                  decoration: const InputDecoration(labelText: 'Name'),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      exercise.name = val;
+                                      Provider.of<WorkoutListModel>(context, listen: false).updateWorkout(workout);
+                                    });
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                tooltip: 'Remove Exercise',
+                                onPressed: () {
+                                  setState(() {
+                                    _repsControllers[index]?.dispose();
+                                    _repsControllers.remove(index);
+                                    _nameControllers[index]?.dispose();
+                                    _nameControllers.remove(index);
+                                    _weightControllers[index]?.dispose();
+                                    _weightControllers.remove(index);
+                                    _removeExercise(context, index);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DropdownButton<WorkoutCategory>(
+                                  value: exercise.category,
+                                  items: WorkoutCategory.values.map((cat) => DropdownMenuItem(
+                                    value: cat,
+                                    child: Text(cat.name),
+                                  )).toList(),
+                                  onChanged: (cat) {
+                                    setState(() {
+                                      if (cat != null) exercise.category = cat;
+                                      Provider.of<WorkoutListModel>(context, listen: false).updateWorkout(workout);
+                                    });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: TextField(
+                                  controller: _repsControllers[index],
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(labelText: 'Reps'),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      exercise.reps = int.tryParse(val) ?? 0;
+                                      Provider.of<WorkoutListModel>(context, listen: false).updateWorkout(workout);
+                                    });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: TextField(
+                                  controller: _weightControllers[index],
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(labelText: 'Weight'),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      exercise.weight = double.tryParse(val) ?? 0;
+                                      Provider.of<WorkoutListModel>(context, listen: false).updateWorkout(workout);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
             ],
-          )),
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _addExercise(context),
+        tooltip: 'Add Exercise',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
