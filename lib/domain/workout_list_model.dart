@@ -18,4 +18,17 @@ class WorkoutListModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void addOrReplaceWorkout(Workout workout) {
+    int idx = _workouts.indexWhere((w) => w.id == workout.id);
+    if (idx != -1) {
+      if (workout.updated.isAfter(_workouts[idx].updated)) {
+        _workouts[idx] = workout;
+        notifyListeners();
+      }
+    } else {
+      _workouts.insert(0, workout);
+      notifyListeners();
+    }
+  }
 }

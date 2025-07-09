@@ -1,16 +1,18 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:uuid/uuid.dart';
+
 class Workout {
   DateTime created = DateTime.now();
   DateTime updated = DateTime.now();
   String name = DateTime.now().toString();
-  int id;
+  String id;
   int color;
   int sets = 1;
   int repetitions = 1;
   List<Exercise> exercises = [];
 
-  Workout(this.id, this.color);
+  Workout({String? id, required this.color}) : id = id ?? const Uuid().v4();
 
   Map<String, dynamic> toJson() => {
     'created': created.toIso8601String(),
@@ -24,7 +26,7 @@ class Workout {
   };
 
   static Workout fromJson(Map<String, dynamic> json) {
-    final workout = Workout(json['id'], json['color']);
+    final workout = Workout(id: json['id'], color: json['color']);
     workout.created = DateTime.parse(json['created']);
     workout.updated = DateTime.parse(json['updated']);
     workout.name = json['name'];

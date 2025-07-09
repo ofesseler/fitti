@@ -47,9 +47,7 @@ class Fitti extends StatelessWidget {
 
   void _createNewWorkout(BuildContext context) {
     final model = Provider.of<WorkoutListModel>(context, listen: false);
-    int id = model.workouts.length + 1;
-    var foo = Workout(id, 50);
-    // No default exercise
+    var foo = Workout(color: 50);
     model.addWorkout(foo);
     _navigateToWorkoutScreen(context, foo, focusName: true);
   }
@@ -100,7 +98,7 @@ class Fitti extends StatelessWidget {
       }
       final List<dynamic> jsonList = jsonDecode(jsonString);
       for (var w in jsonList) {
-        model.addWorkout(Workout.fromJson(w));
+        model.addOrReplaceWorkout(Workout.fromJson(w));
       }
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
