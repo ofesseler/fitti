@@ -10,9 +10,10 @@ import 'package:file_picker/file_picker.dart';
 // Import dart:io File only on non-web
 // ignore: uri_does_not_exist
 import 'dart:io' show File;
-// Import dart:html as html only on web
-// ignore: uri_does_not_exist
-import 'dart:html' as html;
+// Conditional import for web export logic
+import 'web_export.dart'
+    if (dart.library.html) 'web_export.dart'
+    if (dart.library.io) 'stub_export.dart';
 
 void main() {
   runApp(
@@ -56,14 +57,9 @@ class Fitti extends StatelessWidget {
     final model = Provider.of<WorkoutListModel>(context, listen: false);
     final jsonString = jsonEncode(model.workouts.map((w) => w.toJson()).toList());
     if (kIsWeb) {
-      // Web: Use AnchorElement to trigger download
+      // Web: Use exportJsonWeb to trigger download
       final bytes = utf8.encode(jsonString);
-      final blob = html.Blob([bytes]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      html.AnchorElement(href: url)
-        ..setAttribute('download', 'workouts_export.json')
-        ..click();
-      html.Url.revokeObjectUrl(url);
+      await exportJsonWeb(bytes, 'workouts_export.json');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Exported as workouts_export.json (check downloads)')),
       );

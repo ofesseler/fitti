@@ -7,13 +7,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'package:fitti/main.dart';
+import 'package:fitti/domain/workout_list_model.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const Overview());
+    // Wrap Overview with ChangeNotifierProvider as in main.dart
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => WorkoutListModel(),
+        child: const Overview(),
+      ),
+    );
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
