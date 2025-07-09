@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 
 class WorkoutScreen extends StatefulWidget {
   final Workout workout;
-  const WorkoutScreen({super.key, required this.workout});
+  final bool focusName;
+  const WorkoutScreen({super.key, required this.workout, this.focusName = false});
 
   @override
   _WorkoutScreenState createState() => _WorkoutScreenState();
@@ -26,6 +27,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     _nameController = TextEditingController(text: workout.name);
     _nameFocusNode = FocusNode();
     _nameFocusNode.addListener(_onNameFocusChange);
+    if (widget.focusName) {
+      // Focus after build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _nameFocusNode.requestFocus();
+      });
+    }
   }
 
   void _onNameFocusChange() {

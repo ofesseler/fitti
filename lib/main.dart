@@ -49,9 +49,9 @@ class Fitti extends StatelessWidget {
     final model = Provider.of<WorkoutListModel>(context, listen: false);
     int id = model.workouts.length + 1;
     var foo = Workout(id, 50);
-    foo.exercises.insert(0, Exercise("butterfly", WorkoutCategory.Shoulders));
+    // No default exercise
     model.addWorkout(foo);
-    _navigateToWorkoutScreen(context, foo);
+    _navigateToWorkoutScreen(context, foo, focusName: true);
   }
 
   Future<void> _exportWorkouts(BuildContext context) async {
@@ -96,12 +96,13 @@ class Fitti extends StatelessWidget {
     }
   }
 
-  void _navigateToWorkoutScreen(BuildContext context, Workout workout) {
+  void _navigateToWorkoutScreen(BuildContext context, Workout workout, {bool focusName = false}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => WorkoutScreen(
           workout: workout,
+          focusName: focusName,
         ),
       ),
     );
