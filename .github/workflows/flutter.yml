@@ -63,10 +63,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Install CocoaPods dependencies
-        run: |
-          cd ios
-          pod install
-          cd ..
+        run: pod install
+        working-directory: ios
       - name: Precache iOS artifacts
         run: flutter precache --ios
       - name: Ensure iOS plugin registrant is generated
