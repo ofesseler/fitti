@@ -24,9 +24,9 @@ void main() {
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(body: CategoryDonutChart(workouts: workouts)),
       ));
-      expect(find.text('Chest'), findsOneWidget);
-      expect(find.text('Abs'), findsOneWidget);
-      expect(find.text('Legs'), findsOneWidget);
+      expect(find.text('Chest (1)'), findsOneWidget);
+      expect(find.text('Abs (1)'), findsOneWidget);
+      expect(find.text('Legs (1)'), findsOneWidget);
       expect(find.text('Exercises\nby Category'), findsOneWidget);
     });
   });
