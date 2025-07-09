@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fitti/screens/workout_screen.dart';
@@ -78,6 +78,16 @@ class Fitti extends StatelessWidget {
   }
 
   Future<void> _importWorkouts(BuildContext context) async {
+    // Prevent import on unsupported desktop platforms
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.linux ||
+         defaultTargetPlatform == TargetPlatform.macOS ||
+         defaultTargetPlatform == TargetPlatform.windows)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Import is not supported on desktop platforms.')),
+      );
+      return;
+    }
     final model = Provider.of<WorkoutListModel>(context, listen: false);
     final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
     if (result != null && (result.files.single.bytes != null || result.files.single.path != null)) {
