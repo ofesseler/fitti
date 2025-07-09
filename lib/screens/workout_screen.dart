@@ -9,10 +9,10 @@ class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key, required this.workout, this.focusName = false});
 
   @override
-  _WorkoutScreenState createState() => _WorkoutScreenState();
+  WorkoutScreenState createState() => WorkoutScreenState();
 }
 
-class _WorkoutScreenState extends State<WorkoutScreen> {
+class WorkoutScreenState extends State<WorkoutScreen> {
   late Workout workout;
   late TextEditingController _nameController;
   late FocusNode _nameFocusNode;

@@ -1,7 +1,4 @@
-import 'dart:ui';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:fitti/domain/workout.dart';
 
 class CategoryDonutChart extends StatelessWidget {

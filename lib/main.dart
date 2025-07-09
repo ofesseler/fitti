@@ -61,6 +61,7 @@ class Fitti extends StatelessWidget {
       // Web: Use exportJsonWeb to trigger download
       final bytes = utf8.encode(jsonString);
       await exportJsonWeb(bytes, 'workouts_export.json');
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Exported as workouts_export.json (check downloads)')),
       );
@@ -69,6 +70,7 @@ class Fitti extends StatelessWidget {
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/workouts_export.json');
       await file.writeAsString(jsonString);
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Exported to ${file.path}')),
       );
@@ -90,6 +92,7 @@ class Fitti extends StatelessWidget {
       for (var w in jsonList) {
         model.addWorkout(Workout.fromJson(w));
       }
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Import successful!')),
       );
@@ -169,7 +172,7 @@ class Fitti extends StatelessWidget {
                                           Text(
                                               "Date ${model.workouts[index].created}"),
                                           Text(
-                                              "Exercises: "+model.workouts[index].exercises.length.toString()),
+                                              "Exercises: ${model.workouts[index].exercises.length}"),
                                         ]),
                                   ),
                                 ),
