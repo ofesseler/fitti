@@ -4,7 +4,7 @@ import 'package:fitti/domain/workout.dart';
 void main() {
   group('Workout', () {
     test('Workout can be created and serialized', () {
-      final workout = Workout(1, 42)
+      final workout = Workout(color: 42)
         ..name = 'Test Workout'
         ..exercises = [
           Exercise('Pushup', WorkoutCategory.Chest)

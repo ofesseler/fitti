@@ -14,7 +14,7 @@ void main() {
 
     testWidgets('shows legend and chart for categories', (tester) async {
       final workouts = [
-        Workout(1, 1)
+        Workout(color: 1)
           ..exercises = [
             Exercise('Pushup', WorkoutCategory.Chest)..reps = 10,
             Exercise('Situp', WorkoutCategory.Abs)..reps = 20,
