@@ -168,9 +168,7 @@ class Fitti extends StatelessWidget {
                                           Text(
                                               "Date ${model.workouts[index].created}"),
                                           Text(
-                                              "Sets: ${model.workouts[index].sets}"),
-                                          Text(
-                                              "Repetitions: ${model.workouts[index].repetitions}"),
+                                              "Exercises: "+model.workouts[index].exercises.length.toString()),
                                         ]),
                                   ),
                                 ),
