@@ -62,6 +62,8 @@ jobs:
         run: flutter clean
       - name: Install dependencies
         run: flutter pub get
+      - name: Precache iOS artifacts
+        run: flutter precache --ios
       - name: Build iOS app
         run: flutter build ios --no-codesign
       - name: Archive iOS artifact
