@@ -69,7 +69,7 @@ class CategoryDonutChart extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Text(section.category.name),
+                  Text('${section.category.name} (${section.count})'),
                 ],
               ),
           ],
