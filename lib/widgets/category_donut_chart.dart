@@ -1,4 +1,7 @@
+import 'dart:ui';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:fitti/domain/workout.dart';
 
 class CategoryDonutChart extends StatelessWidget {
@@ -43,15 +46,35 @@ class CategoryDonutChart extends StatelessWidget {
         ));
       }
     });
-    return SizedBox(
-      height: 200,
-      width: 200,
-      child: CustomPaint(
-        painter: _DonutChartPainter(sections, total),
-        child: Center(
-          child: Text('Exercises\nby Category', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyMedium),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _DonutChartWithTooltip(sections: sections, total: total),
+        const SizedBox(height: 16),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          runSpacing: 4,
+          children: [
+            for (final section in sections)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: section.color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(section.category.name),
+                ],
+              ),
+          ],
         ),
-      ),
+      ],
     );
   }
 }
@@ -61,6 +84,28 @@ class _DonutSection {
   final int count;
   final Color color;
   _DonutSection({required this.category, required this.count, required this.color});
+}
+
+class _DonutChartWithTooltip extends StatelessWidget {
+  final List<_DonutSection> sections;
+  final int total;
+  const _DonutChartWithTooltip({required this.sections, required this.total});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 200,
+      width: 200,
+      child: CustomPaint(
+        painter: _DonutChartPainter(sections, total),
+        child: Center(
+          child: Text('Exercises\nby Category',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ),
+    );
+  }
 }
 
 class _DonutChartPainter extends CustomPainter {
