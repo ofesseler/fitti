@@ -7,6 +7,7 @@ import 'package:fitti/domain/workout.dart';
 import 'package:fitti/domain/workout_list_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:fitti/widgets/category_donut_chart.dart';
 // Import dart:io File only on non-web
 // ignore: uri_does_not_exist
 import 'dart:io' show File;
@@ -130,6 +131,9 @@ class Fitti extends StatelessWidget {
             builder: (context, model, child) => Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                // Donut chart for exercise category distribution (all exercises)
+                CategoryDonutChart(workouts: model.workouts),
+                const SizedBox(height: 16),
                 const Text(
                   'You have this many workouts so far:',
                 ),
