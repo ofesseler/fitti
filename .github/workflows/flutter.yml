@@ -2,7 +2,7 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, macosbuild ]
+    branches: [ main, iosbuild ]
   pull_request:
     branches: [ main ]
   release:
@@ -58,6 +58,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.32.5'
+      - name: Clean build artifacts
+        run: flutter clean
       - name: Install dependencies
         run: flutter pub get
       - name: Build iOS app
