@@ -1,16 +1,10 @@
-# fitti
+# Fitti
 
-A new Flutter project.
+Fitti is a simple workout tracking app built with Flutter. It allows you to:
 
-## Getting Started
+- Create and manage multiple workouts
+- Add, edit, and remove exercises for each workout
+- Track exercise details such as name, category, repetitions, and weight
+- Export and import your workouts as JSON files for backup or sharing
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The app is designed for quick and easy workout logging, with a clean and intuitive interface. All workout and exercise data is managed locally on your device.
