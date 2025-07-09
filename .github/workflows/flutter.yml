@@ -2,7 +2,7 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, macosbuild ]
   pull_request:
     branches: [ main ]
   release:
@@ -51,8 +51,25 @@ jobs:
           name: build-macos-artifact
           path: build/macos/Build/Products/Release/*.app
 
+  build_ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.5'
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build iOS app
+        run: flutter build ios --no-codesign
+      - name: Archive iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ios-artifact
+          path: build/ios/iphoneos/*.app
+
   release:
-    needs: [build, build_macos]
+    needs: [build, build_macos, build_ios]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'created'
     steps:
@@ -63,6 +80,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: build-macos-artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-ios-artifact
       - name: Publish Release Assets
         uses: softprops/action-gh-release@v2
         with:
@@ -70,5 +90,6 @@ jobs:
             build/web/**
             build/app/outputs/flutter-apk/app-release.apk
             build/macos/Build/Products/Release/*.app
+            build/ios/iphoneos/*.app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
