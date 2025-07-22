@@ -20,6 +20,20 @@ class WorkoutScreenState extends State<WorkoutScreen> {
   final Map<int, TextEditingController> _nameControllers = {};
   final Map<int, TextEditingController> _weightControllers = {};
 
+  String getDefaultWorkoutName() {
+    final now = DateTime.now();
+    final weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][now.weekday - 1];
+    String partOfDay;
+    if (now.hour < 12) {
+      partOfDay = "morning";
+    } else if (now.hour < 18) {
+      partOfDay = "afternoon";
+    } else {
+      partOfDay = "evening";
+    }
+    return "$weekday $partOfDay workout";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -38,9 +52,25 @@ class WorkoutScreenState extends State<WorkoutScreen> {
   void _onNameFocusChange() {
     if (!_nameFocusNode.hasFocus) {
       final model = Provider.of<WorkoutListModel>(context, listen: false);
-      if (workout.name != _nameController.text) {
+      String enteredName = _nameController.text.trim();
+      if (enteredName.isEmpty) {
+        // Generate name based on time of day
+        final now = DateTime.now();
+        final weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][now.weekday - 1];
+        String partOfDay;
+        if (now.hour < 12) {
+          partOfDay = "morning";
+        } else if (now.hour < 18) {
+          partOfDay = "afternoon";
+        } else {
+          partOfDay = "evening";
+        }
+        enteredName = "$weekday $partOfDay workout";
+        _nameController.text = enteredName;
+      }
+      if (workout.name != enteredName) {
         setState(() {
-          workout.name = _nameController.text;
+          workout.name = enteredName;
           model.updateWorkout(workout);
         });
       }
@@ -96,17 +126,22 @@ class WorkoutScreenState extends State<WorkoutScreen> {
             children: [
               Text(workout.created.toString()),
               TextField(
-                  controller: _nameController,
-                  focusNode: _nameFocusNode,
-                  decoration: InputDecoration(labelText: 'Workout Name'),
-                  onSubmitted: (String? fii) {
-                    setState(() {
-                      if (fii != null) {
-                        workout.name = fii;
-                        model.updateWorkout(workout);
-                      }
-                    });
-                  }),
+                controller: _nameController,
+                focusNode: _nameFocusNode,
+                decoration: InputDecoration(
+                  labelText: 'Workout Name',
+                  hintText: getDefaultWorkoutName(),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                ),
+                onSubmitted: (String? fii) {
+                  setState(() {
+                    if (fii != null) {
+                      workout.name = fii;
+                      model.updateWorkout(workout);
+                    }
+                  });
+                },
+              ),
               const SizedBox(height: 24),
               const Text('Exercises', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               ListView.builder(

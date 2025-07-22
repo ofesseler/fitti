@@ -48,6 +48,7 @@ class Fitti extends StatelessWidget {
   void _createNewWorkout(BuildContext context) {
     final model = Provider.of<WorkoutListModel>(context, listen: false);
     var foo = Workout(color: 50);
+    foo.name = "";
     model.addWorkout(foo);
     _navigateToWorkoutScreen(context, foo, focusName: true);
   }
