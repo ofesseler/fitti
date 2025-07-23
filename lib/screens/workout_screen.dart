@@ -21,6 +21,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   late FocusNode _nameFocusNode;
   final Map<String, ExerciseControllers> _exerciseControllers = {};
   late WorkoutListModel model;
+  final Map<String, String?> _exerciseNameErrors = {};
+  final Map<String, String?> _exerciseRepsErrors = {};
+  final Map<String, String?> _exerciseWeightErrors = {};
 
   @override
   void didChangeDependencies() {
@@ -48,57 +51,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     workout = widget.workout;
     _nameController = TextEditingController(text: workout.name);
     _nameFocusNode = FocusNode();
-    _nameFocusNode.addListener(_onNameFocusChange);
-    if (widget.focusName) {
-      // Focus after build
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _nameFocusNode.requestFocus();
-      });
-    }
   }
-
-  void _onNameFocusChange() {
-    if (!_nameFocusNode.hasFocus) {
-      String enteredName = _nameController.text.trim();
-      if (enteredName.isEmpty) {
-        enteredName = getDefaultWorkoutName();
-        _nameController.text = enteredName;
-      }
-      if (workout.name != enteredName) {
-        setState(() {
-          workout.name = enteredName;
-          model.updateWorkout(workout);
-        });
-      }
-    }
-  }
-
-  void _addExercise(BuildContext context) {
-    setState(() {
-      workout.exercises.add(Exercise('New Exercise', WorkoutCategory.Abs));
-      model.updateWorkout(workout);
-    });
-  }
-
-  void _removeExercise(BuildContext context, int index) {
-    setState(() {
-      workout.exercises.removeAt(index);
-      model.updateWorkout(workout);
-    });
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _nameFocusNode.removeListener(_onNameFocusChange);
-    _nameFocusNode.dispose();
-    for (final c in _exerciseControllers.values) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -148,6 +101,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     key: ValueKey('exercise_card_${exercise.id}'),
                     exercise: exercise,
                     controllers: controllers,
+                    nameError: _exerciseNameErrors[exercise.id],
+                    repsError: _exerciseRepsErrors[exercise.id],
+                    weightError: _exerciseWeightErrors[exercise.id],
                     onRemove: () async {
                       final shouldRemove = await showDialog<bool>(
                         context: context,
@@ -170,26 +126,47 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         setState(() {
                           controllers.dispose();
                           _exerciseControllers.remove(exercise.id);
-                          _removeExercise(context, index);
+                          _exerciseNameErrors.remove(exercise.id);
+                          _exerciseRepsErrors.remove(exercise.id);
+                          _exerciseWeightErrors.remove(exercise.id);
+                          workout.exercises.removeAt(index);
+                          model.updateWorkout(workout);
                         });
                       }
                     },
                     onNameChanged: (val) {
                       setState(() {
-                        exercise.name = val;
-                        model.updateWorkout(workout);
+                        if (val.trim().isEmpty) {
+                          _exerciseNameErrors[exercise.id] = 'Name cannot be empty';
+                        } else {
+                          _exerciseNameErrors[exercise.id] = null;
+                          exercise.name = val;
+                          model.updateWorkout(workout);
+                        }
                       });
                     },
                     onRepsChanged: (val) {
                       setState(() {
-                        exercise.reps = int.tryParse(val) ?? 0;
-                        model.updateWorkout(workout);
+                        final parsed = int.tryParse(val);
+                        if (parsed == null || parsed < 0) {
+                          _exerciseRepsErrors[exercise.id] = 'Reps must be a positive number';
+                        } else {
+                          _exerciseRepsErrors[exercise.id] = null;
+                          exercise.reps = parsed;
+                          model.updateWorkout(workout);
+                        }
                       });
                     },
                     onWeightChanged: (val) {
                       setState(() {
-                        exercise.weight = double.tryParse(val) ?? 0;
-                        model.updateWorkout(workout);
+                        final parsed = double.tryParse(val);
+                        if (parsed == null) {
+                          _exerciseWeightErrors[exercise.id] = 'Weight must be a valid number';
+                        } else {
+                          _exerciseWeightErrors[exercise.id] = null;
+                          exercise.weight = parsed;
+                          model.updateWorkout(workout);
+                        }
                       });
                     },
                     onCategoryChanged: (cat) {
@@ -206,9 +183,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _addExercise(context),
         tooltip: 'Add Exercise',
         child: const Icon(Icons.add),
+        onPressed: () {
+          setState(() {
+            final newExercise = Exercise('', WorkoutCategory.Chest);
+            workout.exercises.add(newExercise);
+            model.updateWorkout(workout);
+          });
+        },
       ),
     );
   }

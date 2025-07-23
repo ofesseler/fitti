@@ -9,6 +9,9 @@ class ExerciseCard extends StatelessWidget {
   final ValueChanged<String> onRepsChanged;
   final ValueChanged<String> onWeightChanged;
   final ValueChanged<WorkoutCategory?> onCategoryChanged;
+  final String? nameError;
+  final String? repsError;
+  final String? weightError;
   final Key? cardKey;
 
   const ExerciseCard({
@@ -19,6 +22,9 @@ class ExerciseCard extends StatelessWidget {
     required this.onRepsChanged,
     required this.onWeightChanged,
     required this.onCategoryChanged,
+    this.nameError,
+    this.repsError,
+    this.weightError,
     this.cardKey,
     super.key,
   });
@@ -38,7 +44,10 @@ class ExerciseCard extends StatelessWidget {
                 Expanded(
                   child: TextField(
                     controller: controllers.nameController,
-                    decoration: const InputDecoration(labelText: 'Name'),
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      errorText: nameError,
+                    ),
                     onChanged: onNameChanged,
                   ),
                 ),
@@ -66,7 +75,10 @@ class ExerciseCard extends StatelessWidget {
                   child: TextField(
                     controller: controllers.repsController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Reps'),
+                    decoration: InputDecoration(
+                      labelText: 'Reps',
+                      errorText: repsError,
+                    ),
                     onChanged: onRepsChanged,
                   ),
                 ),
@@ -75,7 +87,10 @@ class ExerciseCard extends StatelessWidget {
                   child: TextField(
                     controller: controllers.weightController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Weight'),
+                    decoration: InputDecoration(
+                      labelText: 'Weight',
+                      errorText: weightError,
+                    ),
                     onChanged: onWeightChanged,
                   ),
                 ),
