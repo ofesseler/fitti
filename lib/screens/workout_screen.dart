@@ -4,12 +4,6 @@ import 'package:fitti/domain/workout_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fitti/widgets/exercise_card.dart';
-
-import 'package:fitti/domain/workout.dart';
-import 'package:fitti/domain/workout_list_model.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:fitti/widgets/exercise_card.dart';
 import 'package:fitti/widgets/exercise_controllers.dart';
 
 class WorkoutScreen extends StatefulWidget {
