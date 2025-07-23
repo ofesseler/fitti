@@ -1,10 +1,16 @@
 
+import 'package:fitti/domain/workout.dart';
+import 'package:fitti/domain/workout_list_model.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fitti/widgets/exercise_card.dart';
 
 import 'package:fitti/domain/workout.dart';
 import 'package:fitti/domain/workout_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fitti/widgets/exercise_card.dart';
+import 'package:fitti/widgets/exercise_controllers.dart';
 
 class WorkoutScreen extends StatefulWidget {
   final Workout workout;
@@ -12,32 +18,14 @@ class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({Key? key, required this.workout, this.focusName = false}) : super(key: key);
 
   @override
-  WorkoutScreenState createState() => WorkoutScreenState();
+  State<WorkoutScreen> createState() => _WorkoutScreenState();
 }
 
-class _ExerciseControllers {
-  final TextEditingController nameController;
-  final TextEditingController repsController;
-  final TextEditingController weightController;
-
-  _ExerciseControllers({
-    required this.nameController,
-    required this.repsController,
-    required this.weightController,
-  });
-
-  void dispose() {
-    nameController.dispose();
-    repsController.dispose();
-    weightController.dispose();
-  }
-}
-
-class WorkoutScreenState extends State<WorkoutScreen> {
+class _WorkoutScreenState extends State<WorkoutScreen> {
   late Workout workout;
   late TextEditingController _nameController;
   late FocusNode _nameFocusNode;
-  final Map<int, _ExerciseControllers> _exerciseControllers = {};
+  final Map<int, ExerciseControllers> _exerciseControllers = {};
   late WorkoutListModel model;
 
   String getDefaultWorkoutName() {
@@ -151,7 +139,7 @@ class WorkoutScreenState extends State<WorkoutScreen> {
                   final exercise = workout.exercises[index];
                   final controllers = _exerciseControllers.putIfAbsent(
                     index,
-                    () => _ExerciseControllers(
+                    () => ExerciseControllers(
                       nameController: TextEditingController(text: exercise.name),
                       repsController: TextEditingController(text: exercise.reps.toString()),
                       weightController: TextEditingController(text: exercise.weight.toString()),
@@ -207,3 +195,6 @@ class WorkoutScreenState extends State<WorkoutScreen> {
     );
   }
 }
+
+
+
