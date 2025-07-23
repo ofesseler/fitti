@@ -39,14 +39,16 @@ class Workout {
 }
 
 class Exercise {
+  final String id;
   String name;
   WorkoutCategory category;
   int reps = 0;
   double weight = 0;
 
-  Exercise(this.name, this.category);
+  Exercise(this.name, this.category, {String? id}) : id = id ?? const Uuid().v4();
 
   Map<String, dynamic> toJson() => {
+    'id': id,
     'name': name,
     'category': category.name,
     'reps': reps,
@@ -57,6 +59,7 @@ class Exercise {
     return Exercise(
       json['name'],
       WorkoutCategory.values.firstWhere((e) => e.name == json['category']),
+      id: json['id'],
     )
       ..reps = json['reps'] ?? 0
       ..weight = (json['weight'] ?? 0).toDouble();

@@ -19,7 +19,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   late Workout workout;
   late TextEditingController _nameController;
   late FocusNode _nameFocusNode;
-  final Map<int, ExerciseControllers> _exerciseControllers = {};
+  final Map<String, ExerciseControllers> _exerciseControllers = {};
   late WorkoutListModel model;
 
   @override
@@ -137,7 +137,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 itemBuilder: (context, index) {
                   final exercise = workout.exercises[index];
                   final controllers = _exerciseControllers.putIfAbsent(
-                    index,
+                    exercise.id,
                     () => ExerciseControllers(
                       nameController: TextEditingController(text: exercise.name),
                       repsController: TextEditingController(text: exercise.reps.toString()),
@@ -145,13 +145,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     ),
                   );
                   return ExerciseCard(
-                    key: ValueKey('exercise_card_$index'),
+                    key: ValueKey('exercise_card_${exercise.id}'),
                     exercise: exercise,
                     controllers: controllers,
                     onRemove: () {
                       setState(() {
                         controllers.dispose();
-                        _exerciseControllers.remove(index);
+                        _exerciseControllers.remove(exercise.id);
                         _removeExercise(context, index);
                       });
                     },
