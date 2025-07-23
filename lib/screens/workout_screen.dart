@@ -22,6 +22,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   final Map<int, ExerciseControllers> _exerciseControllers = {};
   late WorkoutListModel model;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    model = Provider.of<WorkoutListModel>(context, listen: false);
+  }
+
   String getDefaultWorkoutName() {
     final now = DateTime.now();
     final weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][now.weekday - 1];
@@ -94,7 +100,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    model = Provider.of<WorkoutListModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(workout.name),
