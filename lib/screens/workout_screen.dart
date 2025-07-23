@@ -148,12 +148,31 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     key: ValueKey('exercise_card_${exercise.id}'),
                     exercise: exercise,
                     controllers: controllers,
-                    onRemove: () {
-                      setState(() {
-                        controllers.dispose();
-                        _exerciseControllers.remove(exercise.id);
-                        _removeExercise(context, index);
-                      });
+                    onRemove: () async {
+                      final shouldRemove = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Remove Exercise?'),
+                          content: const Text('Are you sure you want to remove this exercise?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text('Remove'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (shouldRemove == true) {
+                        setState(() {
+                          controllers.dispose();
+                          _exerciseControllers.remove(exercise.id);
+                          _removeExercise(context, index);
+                        });
+                      }
                     },
                     onNameChanged: (val) {
                       setState(() {

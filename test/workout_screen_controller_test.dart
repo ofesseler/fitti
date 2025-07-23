@@ -31,7 +31,10 @@ void main() {
 
     // Remove the first exercise
     await tester.tap(find.byTooltip('Remove Exercise').first);
-    await tester.pump();
+    await tester.pumpAndSettle();
+    // Confirm in dialog
+    await tester.tap(find.text('Remove'));
+    await tester.pumpAndSettle();
     expect(find.byType(TextField), findsNWidgets(4)); // 1 + 1*3
   });
 
@@ -52,7 +55,10 @@ void main() {
 
     // Remove the only exercise
     await tester.tap(find.byTooltip('Remove Exercise'));
-    await tester.pump();
+    await tester.pumpAndSettle();
+    // Confirm in dialog
+    await tester.tap(find.text('Remove'));
+    await tester.pumpAndSettle();
     expect(find.byType(TextField), findsOneWidget); // only workout name field remains
   });
 }
