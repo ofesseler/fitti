@@ -9,7 +9,7 @@ import 'package:fitti/widgets/exercise_controllers.dart';
 class WorkoutScreen extends StatefulWidget {
   final Workout workout;
   final bool focusName;
-  const WorkoutScreen({Key? key, required this.workout, this.focusName = false}) : super(key: key);
+  const WorkoutScreen({super.key, required this.workout, this.focusName = false});
 
   @override
   State<WorkoutScreen> createState() => _WorkoutScreenState();
@@ -52,6 +52,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     _nameController = TextEditingController(text: workout.name);
     _nameFocusNode = FocusNode();
   }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
